@@ -14,6 +14,8 @@ useHead({
 </template>
 
 <style>
+@import 'lew-ui/style';
+
 html,
 body,
 #__nuxt {
