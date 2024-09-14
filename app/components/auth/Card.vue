@@ -4,7 +4,7 @@
 
 <template>
   <div
-    class="select-none border bg-white p-10 dark:bg-dark"
+    class="select-none border bg-white p-5 dark:bg-dark"
     border="~ gray-200 dark:dark-300 rounded-lg solid"
     shadow="lg dark:dark-500"
   >

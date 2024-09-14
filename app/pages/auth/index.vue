@@ -90,12 +90,11 @@ function handleTabChange() {
         show-password
         max-length="30"
       />
-      <div v-if="selectedTab === 'register'">
+      <div v-if="selectedTab === 'register'" class="flex items-center">
         <lew-checkbox
-          v-if="selectedTab === 'register'"
           v-model="formData.agree"
         />
-        <span class="text-sm">
+        <span class="ml-2 text-sm">
           I agree to the
           <nuxt-link to="/terms-of-service" target="_blank" class="text-blue-600 font-bold">Terms of Service</nuxt-link>
           and
