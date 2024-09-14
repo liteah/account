@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { LewButton } from 'lew-ui'
-
 const color = useColorMode()
 
 function changeTheme() {
@@ -49,13 +47,13 @@ useHead({
     content: () => color.value === 'dark' ? '#222222' : '#ffffff',
   }],
   htmlAttrs: {
-    class: color.value === 'dark' ? 'lew-dark' : null,
+    class: () => color.value === 'dark' ? 'lew-dark' : 'lew-light',
   },
 })
 </script>
 
 <template>
-  <LewButton
+  <lew-button
     type="light"
     round
     :icon="color.value === 'dark' ? 'moon' : 'sun'"
