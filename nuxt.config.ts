@@ -13,8 +13,8 @@ export default defineNuxtConfig({
 
   plugins: [
     {
-      src: "@/plugins/lew-ui.ts",
-      mode: "client",
+      src: '@/plugins/lew-ui.ts',
+      mode: 'client',
     },
   ],
 
