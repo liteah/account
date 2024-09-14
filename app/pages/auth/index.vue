@@ -22,19 +22,6 @@ const tabOptions = [
   },
 ]
 
-const greetingText = computed(() => {
-  switch (selectedTab.value) {
-    case 'login':
-      return 'Welcome back'
-    case 'register':
-      return 'Create your account'
-    case 'reset':
-      return 'Find your account'
-    default:
-      return ''
-  }
-})
-
 const isCodeWaiting = ref(false)
 
 const formData = reactive({
@@ -43,6 +30,7 @@ const formData = reactive({
   verificationCode: '',
   confirmPassword: '',
   agree: true,
+  remember: false,
 })
 
 function handleTabChange() {
@@ -52,27 +40,24 @@ function handleTabChange() {
 
 <template>
   <auth-card>
-    <h1 class="mb-5 text-left text-xl font-bold">
-      {{ greetingText }}
-    </h1>
-    <div class="flex flex-col items-center justify-center gap-4">
+    <div class="mb-5 flex flex-col space-y-4">
+      <icon-graphic-logo class="h-10 w-10" />
+      <h1 class="text-left text-xl font-bold">
+        {{ selectedTab === 'login' ? 'Login to Conova' : selectedTab === 'register' ? 'Create Conova Account' : selectedTab === 'reset' ? 'Forgot Password?' : '' }}
+      </h1>
+    </div>
+    <div class="flex flex-col gap-4">
       <lew-tabs
         v-model="selectedTab"
         :options="tabOptions"
-        :item-width="120"
-        style="width: 100%"
         @change="handleTabChange"
       />
       <lew-input
         v-model="formData.email"
         placeholder="Email"
         type="email"
-      />
-      <lew-input
-        v-if="selectedTab === 'register' || selectedTab === 'reset'"
-        v-model="formData.verificationCode"
-        placeholder="Verification Code"
-        max-length="6"
+        prefixes="icon"
+        prefixes-value="mail"
       />
       <lew-input
         v-model="formData.password"
@@ -80,29 +65,27 @@ function handleTabChange() {
         type="password"
         show-password
         max-length="30"
-      />
-
-      <lew-input
-        v-if="selectedTab === 'reset' "
-        v-model="formData.confirmPassword"
-        placeholder="Confirm Password"
-        type="password"
-        show-password
-        max-length="30"
+        prefixes="icon"
+        prefixes-value="key"
       />
       <div v-if="selectedTab === 'register'" class="flex items-center">
         <lew-checkbox
           v-model="formData.agree"
         />
-        <span class="ml-2 text-sm">
+        <span class="ml-1 break-words text-left text-xs">
           I agree to the
-          <nuxt-link to="/terms-of-service" target="_blank" class="text-blue-600 font-bold">Terms of Service</nuxt-link>
+          <nuxt-link to="/terms-of-service" target="_blank" class="link">Terms</nuxt-link>
           and
-          <nuxt-link to="/privacy-policy" target="_blank" class="text-blue-600 font-bold">Privacy Policy</nuxt-link>
+          <nuxt-link to="/privacy-policy" target="_blank" class="link">Privacy Policy</nuxt-link>
         </span>
       </div>
-
+      <lew-checkbox
+        v-if="selectedTab === 'login'"
+        v-model="formData.remember"
+        label="Remember me"
+      />
       <lew-button
+        class="full"
         :text="selectedTab === 'login' ? 'Login' : selectedTab === 'register' ? 'Register' : 'Reset Password'"
         :loading="isCodeWaiting"
       />
@@ -111,11 +94,7 @@ function handleTabChange() {
 </template>
 
 <style scoped>
-.lew-button {
-  width: 100%;
-}
-
-.lew-tabs {
+.full {
   width: 100%;
 }
 </style>
