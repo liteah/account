@@ -1,11 +1,24 @@
 <script lang="ts" setup>
+import { LewMessage, LewNotification } from 'lew-ui'
+
 definePageMeta({
   layout: 'auth',
 })
 
+const supabase = useSupabaseClient()
 const route = useRoute()
 const typeQuery = route.query.type
 const selectedTab = ref(typeQuery || 'login')
+
+const isLoading = ref(false)
+const isEmailError = ref(false)
+const isPasswordError = ref(false)
+const emailError = ref('')
+const passwordError = ref('')
+const formData = ref({
+  email: '',
+  password: '',
+})
 
 const tabOptions = [
   {
@@ -22,14 +35,105 @@ const tabOptions = [
   },
 ]
 
-const isCodeWaiting = ref(false)
+function validateEmail() {
+  const emailValidationRules = [
+    {
+      condition: !formData.value.email,
+      message: 'Email is required',
+    },
+    {
+      condition: !/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.email),
+      message: 'Invalid email format',
+    },
+  ]
 
-const formData = reactive({
-  email: '',
-  password: '',
-  verificationCode: '',
-  confirmPassword: '',
-})
+  const failedRule = emailValidationRules.find(rule => rule.condition)
+  if (failedRule) {
+    emailError.value = failedRule.message
+    isEmailError.value = true
+  }
+  else {
+    isEmailError.value = false
+  }
+}
+
+function validatePassword() {
+  const passwordValidationRules = [
+    {
+      condition: !formData.value.password,
+      message: 'Password is required',
+    },
+    {
+      condition: formData.value.password.length < 6,
+      message: 'Password must be at least 6 characters',
+    },
+  ]
+
+  const failedRule = passwordValidationRules.find(rule => rule.condition)
+  if (failedRule) {
+    passwordError.value = failedRule.message
+    isPasswordError.value = true
+  }
+  else {
+    isPasswordError.value = false
+  }
+}
+
+function validateForm() {
+  validateEmail()
+  validatePassword()
+  return !isEmailError.value && !isPasswordError.value
+}
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    return
+  }
+
+  isLoading.value = true
+
+  try {
+    if (selectedTab.value === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.value.email,
+        password: formData.value.password,
+      })
+      if (error)
+        throw error
+      navigateTo('/dashboard')
+    }
+    else if (selectedTab.value === 'register') {
+      const { error } = await supabase.auth.signUp({
+        email: formData.value.email,
+        password: formData.value.password,
+      })
+      if (error)
+        throw error
+      LewNotification.success({
+        title: 'Registration successful',
+        content: 'Please check your email for the verification link.',
+      })
+    }
+    else if (selectedTab.value === 'reset') {
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.value.email)
+      if (error)
+        throw error
+      LewNotification.success({
+        title: 'Password reset email sent',
+        content: 'Please check your email for the password reset link.',
+      })
+    }
+  }
+  catch (error) {
+    LewNotification.error({
+      title: 'Unable to complete the operation',
+      content: `An unexpected error occurred. Please try again later or contact the support team. Error message: ${error}`,
+    })
+  }
+  finally {
+    isLoading.value = false
+  }
+}
 
 function handleTabChange() {
   navigateTo({ query: { type: selectedTab.value } })
@@ -50,26 +154,41 @@ function handleTabChange() {
         :options="tabOptions"
         @change="handleTabChange"
       />
-      <lew-input
-        v-model="formData.email"
-        placeholder="Email"
-        type="email"
-        prefixes="icon"
-        prefixes-value="mail"
-      />
-      <lew-input
-        v-model="formData.password"
-        placeholder="Password"
-        type="password"
-        show-password
-        max-length="30"
-        prefixes="icon"
-        prefixes-value="key"
-      />
+      <div class="flex flex-col gap-1">
+        <lew-input
+          v-model="formData.email"
+          placeholder="Email"
+          type="email"
+          prefixes="icon"
+          prefixes-value="mail"
+          @input="validateEmail"
+          @blur="validateEmail"
+        />
+        <span v-if="isEmailError" class="text-xs text-red-500 dark:text-red-400">
+          {{ emailError }}
+        </span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <lew-input
+          v-model="formData.password"
+          placeholder="Password"
+          type="password"
+          show-password
+          max-length="30"
+          prefixes="icon"
+          prefixes-value="key"
+          @input="validatePassword"
+          @blur="validatePassword"
+        />
+        <span v-if="isPasswordError" class="text-xs text-red-500 dark:text-red-400">
+          {{ passwordError }}
+        </span>
+      </div>
       <lew-button
         class="full"
         :text="selectedTab === 'login' ? 'Login' : selectedTab === 'register' ? 'Register' : 'Reset Password'"
-        :loading="isCodeWaiting"
+        :loading="isLoading"
+        @click="handleSubmit"
       />
       <div v-if="selectedTab === 'login' || selectedTab === 'register'">
         <div class="flex items-center">

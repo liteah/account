@@ -10,6 +10,7 @@
     "prepare": "nuxi prepare",
     "start": "node .output/server/index.mjs",
     "start:generate": "npx serve .output/public",
+    "nuxt": "nuxi",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "vue-tsc --noEmit"
@@ -22,6 +23,7 @@
     "@nuxt/devtools": "^1.4.0",
     "@nuxt/eslint": "^0.5.2",
     "@nuxtjs/color-mode": "^3.4.4",
+    "@nuxtjs/supabase": "^1.4.0",
     "@pinia/nuxt": "^0.5.4",
     "@unocss/eslint-config": "^0.62.3",
     "@unocss/nuxt": "^0.62.3",

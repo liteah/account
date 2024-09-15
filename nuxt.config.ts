@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
+    '@nuxtjs/supabase',
   ],
 
   plugins: [
@@ -44,6 +45,20 @@ export default defineNuxtConfig({
       crawlLinks: false,
       routes: ['/'],
       ignore: ['/hi'],
+    },
+  },
+
+  supabase: {
+    redirect: true,
+    redirectOptions: {
+      login: '/auth',
+      callback: '/auth/confirm',
+      include: undefined,
+      exclude: [
+        '/auth',
+        '/auth/*',
+      ],
+      cookieRedirect: false,
     },
   },
 
