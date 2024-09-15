@@ -68,17 +68,6 @@ function handleTabChange() {
         prefixes="icon"
         prefixes-value="key"
       />
-      <div v-if="selectedTab === 'register'" class="flex items-center">
-        <lew-checkbox
-          v-model="formData.agree"
-        />
-        <span class="ml-1 break-words text-left text-xs">
-          I agree to the
-          <nuxt-link to="/terms-of-service" target="_blank" class="link">Terms</nuxt-link>
-          and
-          <nuxt-link to="/privacy-policy" target="_blank" class="link">Privacy Policy</nuxt-link>
-        </span>
-      </div>
       <lew-checkbox
         v-if="selectedTab === 'login'"
         v-model="formData.remember"
@@ -89,6 +78,33 @@ function handleTabChange() {
         :text="selectedTab === 'login' ? 'Login' : selectedTab === 'register' ? 'Register' : 'Reset Password'"
         :loading="isCodeWaiting"
       />
+      <div v-if="selectedTab === 'login' || selectedTab === 'register'">
+        <div class="flex items-center">
+          <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
+          <span class="mx-2 text-xs text-gray-500 dark:text-gray-400">or continue with</span>
+          <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
+        </div>
+        <div class="mt-2 w-full flex items-center gap-2">
+          <lew-button
+            type="light"
+            text="Google"
+            class="flex-1"
+          />
+          <lew-button
+            type="light"
+            text="Github"
+            class="flex-1"
+          />
+        </div>
+      </div>
+      <span v-if="selectedTab === 'register'" class="ml-1 break-words text-left text-xs text-gray-500 dark:text-gray-400">
+        By creating an account,
+        you agree to the
+        <nuxt-link to="/terms-of-service" target="_blank" class="link">Terms <br> of Service</nuxt-link>
+        and
+        <nuxt-link to="/privacy-policy" target="_blank" class="link">Privacy Policy</nuxt-link>
+        . and to receive <br> periodic emails, you can opt-out anytime.
+      </span>
     </div>
   </auth-card>
 </template>
