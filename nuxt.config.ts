@@ -17,6 +17,10 @@ export default defineNuxtConfig({
       src: '@/plugins/lew-ui.ts',
       mode: 'client',
     },
+    {
+      src: '@/plugins/geetest.ts',
+      mode: 'client',
+    },
   ],
 
   experimental: {

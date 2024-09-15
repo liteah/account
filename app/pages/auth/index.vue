@@ -1,5 +1,7 @@
+<!-- eslint-disable ts/ban-ts-comment -->
 <script lang="ts" setup>
 import { LewMessage, LewNotification } from 'lew-ui'
+import geetestConfig from '@/config/geetest'
 
 definePageMeta({
   layout: 'auth',
@@ -7,6 +9,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const route = useRoute()
+const captchaObj = ref(null)
 const typeQuery = route.query.type
 const selectedTab = ref(typeQuery || 'login')
 
@@ -90,6 +93,22 @@ async function handleSubmit() {
     return
   }
 
+  if ((selectedTab.value === 'register' || selectedTab.value === 'reset') && import.meta.client) {
+    // @ts-expect-error
+    if (captchaObj.value && captchaObj.value.getValidate()) {
+      await handleAuth()
+    }
+    else {
+      // @ts-expect-error
+      captchaObj.value.showCaptcha()
+    }
+  }
+  else {
+    await handleAuth()
+  }
+}
+
+async function handleAuth() {
   isLoading.value = true
 
   try {
@@ -138,6 +157,23 @@ async function handleSubmit() {
 function handleTabChange() {
   navigateTo({ query: { type: selectedTab.value } })
 }
+
+onMounted(() => {
+  if (import.meta.client) {
+    // @ts-expect-error
+    initGeetest4(geetestConfig, (obj: any) => {
+      captchaObj.value = obj
+      obj.onSuccess(() => {
+        handleSubmit()
+      }).onError(() => {
+        LewNotification.error({
+          title: 'Captcha Authentication Error',
+          content: 'Please try again',
+        })
+      })
+    })
+  }
+})
 </script>
 
 <template>
