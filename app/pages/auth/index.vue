@@ -29,8 +29,6 @@ const formData = reactive({
   password: '',
   verificationCode: '',
   confirmPassword: '',
-  agree: true,
-  remember: false,
 })
 
 function handleTabChange() {
@@ -67,11 +65,6 @@ function handleTabChange() {
         max-length="30"
         prefixes="icon"
         prefixes-value="key"
-      />
-      <lew-checkbox
-        v-if="selectedTab === 'login'"
-        v-model="formData.remember"
-        label="Remember me"
       />
       <lew-button
         class="full"
