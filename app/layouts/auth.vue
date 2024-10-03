@@ -8,7 +8,7 @@
     </div>
     <div class="fixed bottom-0 left-1/2 mb-10 mt-auto flex transform items-center justify-center gap-2.5 pt-4.5 -translate-x-0.5/1">
       <common-select-theme />
-      <common-select-langauge />
+      <!-- <common-select-langauge /> -->
     </div>
   </div>
 </template>

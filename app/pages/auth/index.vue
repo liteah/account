@@ -32,10 +32,6 @@ const tabOptions = [
     label: 'Register',
     value: 'register',
   },
-  {
-    label: 'Reset Password',
-    value: 'reset',
-  },
 ]
 
 function validateEmail() {
@@ -154,6 +150,22 @@ async function handleAuth() {
   }
 }
 
+async function handleGithub() {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+    })
+    if (error)
+      throw error
+  }
+  catch (error) {
+    LewNotification.error({
+      title: 'Unable to complete the operation',
+      content: `An unexpected error occurred. Please try again later or contact the support team. Error message: ${error}`,
+    })
+  }
+}
+
 function handleTabChange() {
   navigateTo({ query: { type: selectedTab.value } })
 }
@@ -188,6 +200,7 @@ onMounted(() => {
       <lew-tabs
         v-model="selectedTab"
         :options="tabOptions"
+        item-width="49%"
         @change="handleTabChange"
       />
       <div class="flex flex-col gap-1">
@@ -195,8 +208,6 @@ onMounted(() => {
           v-model="formData.email"
           placeholder="Email"
           type="email"
-          prefixes="icon"
-          prefixes-value="mail"
           @input="validateEmail"
           @blur="validateEmail"
         />
@@ -211,8 +222,6 @@ onMounted(() => {
           type="password"
           show-password
           max-length="30"
-          prefixes="icon"
-          prefixes-value="key"
           @input="validatePassword"
           @blur="validatePassword"
         />
@@ -237,21 +246,26 @@ onMounted(() => {
             type="light"
             text="Google"
             class="flex-1"
-          />
+          >
+            <div i-ri-google-line />
+            Google
+          </lew-button>
           <lew-button
             type="light"
-            text="Github"
             class="flex-1"
-          />
+            @click="handleGithub"
+          >
+            <div i-ri-github-line />
+            GitHub
+          </lew-button>
         </div>
       </div>
-      <span v-if="selectedTab === 'register'" class="ml-1 break-words text-left text-xs text-gray-500 dark:text-gray-400">
-        By creating an account,
-        you agree to the
-        <nuxt-link to="/terms-of-service" target="_blank" class="link">Terms <br> of Service</nuxt-link>
-        and
+      <span class="ml-1 break-words text-left text-xs text-gray-500 dark:text-gray-400">
+        By continuing, you agree to the
+        <nuxt-link to="/terms-of-service" target="_blank" class="link">Terms of Service</nuxt-link>
+        <br> and
         <nuxt-link to="/privacy-policy" target="_blank" class="link">Privacy Policy</nuxt-link>
-        . and to receive <br> periodic emails, you can opt-out anytime.
+        and to receive periodic emails, <br> you can opt-out anytime.
       </span>
     </div>
   </auth-card>

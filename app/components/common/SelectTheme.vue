@@ -55,8 +55,10 @@ useHead({
 <template>
   <lew-button
     type="light"
-    round
-    :icon="color.value === 'dark' ? 'moon' : 'sun'"
+    color="gray"
     @click="handleToggle"
-  />
+  >
+    <div v-if="color.value === 'dark'" i-ri-sun-line />
+    <div v-else i-ri-moon-line />
+  </lew-button>
 </template>
